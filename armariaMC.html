@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Inventário de Itens</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0a0a0a;
+      color: #ffffff;
+      padding: 20px;
+    }
+
+    .logo-container {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo-container img {
+      width: 300px;
+      max-width: 90%;
+    }
+
+    .row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .section {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(255,0,0,0.3);
+      flex: 1;
+    }
+
+    h1, h2 {
+      margin-top: 0;
+      color: #b90101;
+    }
+
+    ul {
+      padding: 0;
+      list-style: none;
+    }
+
+    li {
+      background: #2a2a2a;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-left: 5px solid #b90101;
+      border-radius: 5px;
+    }
+
+    .bold {
+      font-weight: bold;
+      color: #b90101;
+    }
+
+    .quantity-input {
+      width: 50px;
+      margin-left: 10px;
+      background: #111;
+      color: #fff;
+      border: 1px solid #b90101;
+      border-radius: 3px;
+    }
+
+    .summary {
+      margin-bottom: 20px;
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(255,0,0,0.3);
+      color: #b90101;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo-container">
+    <!-- Substitua a URL abaixo pela imagem correta da logo do RD2 -->
+    <img src="https://img001.prntscr.com/file/img001/xf6vGX-pTLq0tF1qHKx1AQ.png" alt="C7 Logo">
+  </div>
+
+  <div class="summary">
+    <h2>Valor da Encomenda: <span id="valor-encomenda">0</span></h2>
+    <h2>Custo Total da Encomenda: <span id="total-cost">0</span></h2>
+  </div>
+
+  <div class="summary">
+    <h2>Valor da Encomenda: <span id="valor-encomenda">0</span></h2>
+    <h2>Custo Total da Encomenda: <span id="total-cost">0</span></h2>
+  </div>
+
+  <div class="grid-container">
+    <div class="row">
+      <div class="section">
+        <h2>Armas</h2>
+        <ul id="armas-list"></ul>
+      </div>
+      <div class="section">
+        <h2>Munições</h2>
+        <ul id="municoes-list"></ul>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="section">
+        <h2>Peças (parte 1)</h2>
+        <ul id="pecas-list-1"></ul>
+      </div>
+      <div class="section">
+        <h2>Peças (parte 2)</h2>
+        <ul id="pecas-list-2"></ul>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="section">
+        <h2>Matérias-Primas</h2>
+        <ul id="materiais-list"></ul>
+      </div>
+      <div class="section">
+        <h2>Diagramas</h2>
+        <ul id="diagramas-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <h2>Materiais usados na encomenda atual:</h2>
+    <ul id="materiais-usados"></ul>
+  </div>
+
+  <script>
+    const materiasPrimas = [
+      { id: 1, nome: 'Lingote de Ferro', valor: 1.6 },
+      { id: 2, nome: 'Lingote de Cobre', valor: 1.8 },
+      { id: 3, nome: 'Lingote de Aço', valor: 1.8 },
+      { id: 4, nome: 'Lingote de Prata', valor: 3.1 },
+      { id: 5, nome: 'Lingote de Ouro', valor: 3.2 },
+      { id: 6, nome: 'Tábua de Madeira', valor: 0.1 },
+      { id: 7, nome: 'Verniz', valor: 0.45 },
+      { id: 8, nome: 'Cápsula de Munição', valor: 0.2 },
+      { id: 9, nome: 'Pólvora', valor: 0.45 },
+    ];
+
+    const diagramas = [
+      { id: 1, nome: 'Diagrama de Munição', valor: 0.15 },
+      { id: 2, nome: 'Diagrama de Revólver', valor: 0.2 },
+      { id: 3, nome: 'Diagrama de Pistola', valor: 0.2 },
+      { id: 4, nome: 'Diagrama de Repetidora', valor: 0.35 },
+      { id: 5, nome: 'Diagrama de Rifle', valor: 0.4 },
+      { id: 6, nome: 'Diagrama de Shotgun', valor: 0.4 },
+    ];
+
+    const pecas = [
+      { id: 1, nome: 'Cano de Revolver', materiasUsados: [3] },
+      { id: 2, nome: 'Corpo de Revolver', materiasUsados: [2] },
+      { id: 3, nome: 'Cilindro de Revolver', materiasUsados: [2, 4] },
+      { id: 4, nome: 'Cano de Pistola', materiasUsados: [3, 4] },
+      { id: 5, nome: 'Corpo de Pistola', materiasUsados: [2] },
+      { id: 6, nome: 'Cano de Repetidora', materiasUsados: [2, 4] },
+      { id: 7, nome: 'Corpo de Repetidora', materiasUsados: [2, 4] },
+      { id: 8, nome: 'Cabo de Repetidora', materiasUsados: [2, 6, 7] },
+      { id: 9, nome: 'Cano de Rifle', materiasUsados: [3, 4] },
+      { id: 10, nome: 'Corpo de Rifle', materiasUsados: [2, 4] },
+      { id: 11, nome: 'Cabo de Rifle', materiasUsados: [2, 6, 7] },
+      { id: 12, nome: 'Cano de Shotgun', materiasUsados: [3, 4] },
+      { id: 13, nome: 'Corpo de Shotgun', materiasUsados: [2, 6, 7] },
+    ];
+
+    const municao = [
+      { id: 1, nome: 'Munição de Revolver', materiasUsados: [8, 9], polvora: 1, diagramasUsados: [1], producao: 100, valor: 0.04 },
+      { id: 2, nome: 'Munição de Pistola', materiasUsados: [8, 9], polvora: 2, diagramasUsados: [1], producao: 90, valor: 0.05 },
+      { id: 3, nome: 'Munição de Repetidora', materiasUsados: [8, 9], polvora: 3, diagramasUsados: [1], producao: 125, valor: 0.04 },
+      { id: 4, nome: 'Munição de Rifle', materiasUsados: [8, 9], polvora: 4, diagramasUsados: [1], producao: 55, valor: 0.1 },
+      { id: 5, nome: 'Munição de Shotgun', materiasUsados: [8, 9], polvora: 4, diagramasUsados: [1], producao: 70, valor: 0.08 },
+    ];
+
+    const armas = [
+      { id: 1, nome: 'Revolver Vaqueiro', pecasUsadas: [1, 2, 3], diagramasUsados: [2], valor: 17.5 },
+      { id: 2, nome: 'Revolver Lemat', pecasUsadas: [1, 2, 3], diagramasUsados: [2], valor: 49.5 },
+      { id: 3, nome: 'Pistola m1899', pecasUsadas: [4, 5], diagramasUsados: [3], valor: 22.5 },
+      { id: 4, nome: 'Repetidora Litchfield', pecasUsadas: [6, 7, 8], diagramasUsados: [4], valor: 37.5 },
+      { id: 5, nome: 'Rifle Springfield', pecasUsadas: [9, 10, 11], diagramasUsados: [5], valor: 40.5 },
+      { id: 6, nome: 'Espingarda Cano Duplo', pecasUsadas: [12, 13], diagramasUsados: [6], valor: 42 },
+    ];
+
+    const pecasMap = new Map(pecas.map(p => [p.id, p]));
+    const materiasMap = new Map(materiasPrimas.map(m => [m.id, m]));
+    const diagramasMap = new Map(diagramas.map(d => [d.id, d]));
+
+    function createSelectableList(list, target, isMunicao = false) {
+      list.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <label>
+            <input type="checkbox" data-id="${item.id}" data-type="${isMunicao ? 'municao' : 'arma'}">
+            ${item.nome}
+            <input type="number" class="quantity-input" value="1" min="1">
+          </label>
+        `;
+        target.appendChild(li);
+      });
+    }
+
+    function renderMateriaisTotais() {
+      const totalCostEl = document.getElementById('total-cost');
+      const valorEncomendaEl = document.getElementById('valor-encomenda');
+      const materiaisUsadosEl = document.getElementById('materiais-usados');
+      let total = 0;
+      let valorEncomenda = 0;
+      const materiaisTotais = new Map();
+
+      document.querySelectorAll('input[type="checkbox"]:checked').forEach(input => {
+        const tipo = input.dataset.type;
+        const id = parseInt(input.dataset.id);
+        const quantidade = parseInt(input.nextElementSibling.value);
+
+        if (tipo === 'arma') {
+          const arma = armas.find(a => a.id === id);
+          valorEncomenda += arma.valor * quantidade;
+
+          arma.pecasUsadas.forEach(pId => {
+            pecasMap.get(pId).materiasUsados.forEach(mId => {
+              materiaisTotais.set(mId, (materiaisTotais.get(mId) || 0) + quantidade);
+              total += materiasMap.get(mId).valor * quantidade;
+            });
+          });
+          arma.diagramasUsados.forEach(dId => {
+            total += diagramasMap.get(dId).valor * quantidade;
+          });
+        }
+
+        if (tipo === 'municao') {
+          const mun = municao.find(m => m.id === id);
+          valorEncomenda += mun.valor * quantidade;
+
+        const lotes = Math.ceil(quantidade / mun.producao); // quantos lotes são necessários
+
+        total += diagramasMap.get(mun.diagramasUsados[0]).valor * lotes;
+
+        const capsulas = 10 * lotes;
+        const polvora = mun.polvora * lotes;
+
+        materiaisTotais.set(8, (materiaisTotais.get(8) || 0) + capsulas);
+        materiaisTotais.set(9, (materiaisTotais.get(9) || 0) + polvora);
+
+        total += materiasMap.get(8).valor * capsulas;
+        total += materiasMap.get(9).valor * polvora;
+        }
+      });
+
+      totalCostEl.innerText = total.toFixed(2);
+      valorEncomendaEl.innerText = valorEncomenda.toFixed(2);
+      materiaisUsadosEl.innerHTML = '';
+      for (const [id, qtd] of materiaisTotais) {
+        const li = document.createElement('li');
+        li.innerText = `${materiasMap.get(id).nome}: ${qtd}`;
+        materiaisUsadosEl.appendChild(li);
+      }
+    }
+
+    createSelectableList(armas, document.getElementById('armas-list'));
+    createSelectableList(municao, document.getElementById('municoes-list'), true);
+
+    const metade = Math.ceil(pecas.length / 2);
+    pecas.slice(0, metade).forEach(p => {
+      const li = document.createElement('li');
+      const materiais = p.materiasUsados.map(id => materiasMap.get(id));
+      const custo = materiais.reduce((acc, m) => acc + m.valor, 0);
+      li.innerHTML = `<span class="bold">${p.nome}</span><br>Materiais: ${materiais.map(m => m.nome + ' (' + m.valor + ')').join(', ')}<br>Custo: ${custo}`;
+      document.getElementById('pecas-list-1').appendChild(li);
+    });
+
+    pecas.slice(metade).forEach(p => {
+      const li = document.createElement('li');
+      const materiais = p.materiasUsados.map(id => materiasMap.get(id));
+      const custo = materiais.reduce((acc, m) => acc + m.valor, 0);
+      li.innerHTML = `<span class="bold">${p.nome}</span><br>Materiais: ${materiais.map(m => m.nome + ' (' + m.valor + ')').join(', ')}<br>Custo: ${custo}`;
+      document.getElementById('pecas-list-2').appendChild(li);
+    });
+
+    materiasPrimas.forEach(m => {
+      const li = document.createElement('li');
+      li.textContent = `${m.nome}: ${m.valor}`;
+      document.getElementById('materiais-list').appendChild(li);
+    });
+
+    diagramas.forEach(d => {
+      const li = document.createElement('li');
+      li.textContent = `${d.nome}: ${d.valor}`;
+      document.getElementById('diagramas-list').appendChild(li);
+    });
+
+    document.body.addEventListener('change', renderMateriaisTotais);
+  </script>
+</body>
+</html>
